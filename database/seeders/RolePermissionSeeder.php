@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Permissions;
+use App\Enums\Roles;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -12,27 +14,20 @@ class RolePermissionSeeder extends Seeder
     {
         $guard = 'sanctum';
 
-        $permissions = [
-            'view users',
-            'manage users',
-            'manage roles',
-            'view articles',
-            'edit articles',
-            'delete articles',
-            'publish articles',
-        ];
-
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission, 'guard_name' => $guard]);
+        foreach (Permissions::cases() as $permission) {
+            Permission::firstOrCreate([
+                'name' => $permission->value,
+                'guard_name' => $guard,
+            ]);
         }
 
-        $admin = Role::firstOrCreate(['name' => 'admin', 'guard_name' => $guard]);
-        $admin->syncPermissions(Permission::where('guard_name', $guard)->get());
+        foreach (Roles::cases() as $roleEnum) {
+            $role = Role::firstOrCreate([
+                'name' => $roleEnum->value,
+                'guard_name' => $guard,
+            ]);
 
-        $editor = Role::firstOrCreate(['name' => 'editor', 'guard_name' => $guard]);
-        $editor->syncPermissions(['view articles', 'edit articles', 'publish articles']);
-
-        $user = Role::firstOrCreate(['name' => 'user', 'guard_name' => $guard]);
-        $user->syncPermissions(['view articles']);
+            $role->syncPermissions($roleEnum->getPermissionNames());
+        }
     }
 }

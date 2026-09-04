@@ -43,5 +43,10 @@ return [
 
     'password_timeout' => 10800,
 
+    /**
+     * Default role assigned to newly self-registered users.
+     * Only assigned if a role with this name exists in the database.
+     */
+    'default_role' => env('DEFAULT_ROLE', 'employee'),
 
 ];

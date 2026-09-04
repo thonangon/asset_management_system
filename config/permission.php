@@ -36,4 +36,14 @@ return [
         'store' => 'default',
     ],
 
+    /*
+     * Credentials for the auto-bootstrapped super_admin account.
+     * This account is created automatically on first boot (no seeder required).
+     */
+    'super_admin' => [
+        'name' => 'Super Admin',
+        'email' => env('SUPER_ADMIN_EMAIL', 'admin@example.com'),
+        'password' => env('SUPER_ADMIN_PASSWORD', 'password'),
+    ],
+
 ];

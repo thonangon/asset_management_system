@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\Roles;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -21,36 +22,63 @@ class RoleController extends Controller
     public function store(Request $request): JsonResponse
     {
         $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:roles,name'],
-            'permissions' => ['sometimes', 'array'],
-            'permissions.*' => [Rule::exists('permissions', 'name')],
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('roles', 'name')->where('guard_name', 'sanctum'),
+            ],
+            'permissions' => ['required', 'array'],
+            'permissions.*' => [
+                'exists:permissions,name',
+            ],
         ]);
 
-        $role = Role::create(['name' => $validated['name'], 'guard_name' => 'sanctum']);
+        $role = Role::create([
+            'name' => $validated['name'],
+            'guard_name' => 'sanctum',
+        ]);
 
-        if (! empty($validated['permissions'])) {
-            $role->syncPermissions($validated['permissions']);
-        }
+        $role->syncPermissions($validated['permissions']);
 
         return response()->json($role->load('permissions:id,name'), 201);
     }
 
     public function update(Request $request, Role $role): JsonResponse
     {
+        if ($role->name === Roles::SUPER_ADMIN->value) {
+            return response()->json(['message' => 'The super_admin role cannot be renamed.'], 422);
+        }
+
         $validated = $request->validate([
-            'permissions' => ['required', 'array'],
-            'permissions.*' => [Rule::exists('permissions', 'name')],
+            'name' => [
+                'sometimes',
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('roles', 'name')->where('guard_name', 'sanctum')->ignore($role->id),
+            ],
+            'permissions' => ['sometimes', 'array'],
+            'permissions.*' => [
+                'exists:permissions,name',
+            ],
         ]);
 
-        $role->syncPermissions($validated['permissions']);
+        if (! empty($validated['name'])) {
+            $role->update(['name' => $validated['name']]);
+        }
+
+        if (array_key_exists('permissions', $validated)) {
+            $role->syncPermissions($validated['permissions']);
+        }
 
         return response()->json($role->load('permissions:id,name'));
     }
 
     public function destroy(Role $role): JsonResponse
     {
-        if (in_array($role->name, ['admin', 'user'], true)) {
-            return response()->json(['message' => 'This role cannot be deleted.'], 422);
+        if ($role->name === Roles::SUPER_ADMIN->value) {
+            return response()->json(['message' => 'The super_admin role cannot be deleted.'], 422);
         }
 
         $role->delete();
@@ -61,5 +89,24 @@ class RoleController extends Controller
     public function permissions(): JsonResponse
     {
         return response()->json(Permission::all(['id', 'name']));
+    }
+
+    public function storePermission(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                Rule::unique('permissions', 'name')->where('guard_name', 'sanctum'),
+            ],
+        ]);
+
+        $permission = Permission::create([
+            'name' => $validated['name'],
+            'guard_name' => 'sanctum',
+        ]);
+
+        return response()->json($permission, 201);
     }
 }
