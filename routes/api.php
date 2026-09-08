@@ -5,6 +5,8 @@ use App\Enums\Roles;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\EmployeeController;
+use App\Http\Controllers\Api\OccupationController;
+use App\Http\Controllers\Api\OrganizationController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
@@ -60,6 +62,19 @@ Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_EMPLOYEES
     Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy']);
 });
 
+// Organization listing: requires "view organizations" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_ORGANIZATIONS->value])->group(function () {
+    Route::get('/organizations/list', [OrganizationController::class, 'index']);
+    Route::get('/organizations/{organization}', [OrganizationController::class, 'show']);
+});
+
+// Organization management: requires "manage organizations" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_ORGANIZATIONS->value])->group(function () {
+    Route::post('/organizations', [OrganizationController::class, 'store']);
+    Route::put('/organizations/{organization}', [OrganizationController::class, 'update']);
+    Route::delete('/organizations/{organization}', [OrganizationController::class, 'destroy']);
+});
+
 // Department listing: requires "view departments" permission
 Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_DEPARTMENTS->value])->group(function () {
     Route::get('/departments/list', [DepartmentController::class, 'index']);
@@ -71,4 +86,12 @@ Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_DEPARTMEN
     Route::post('/departments', [DepartmentController::class, 'store']);
     Route::put('/departments/{department}', [DepartmentController::class, 'update']);
     Route::delete('/departments/{department}', [DepartmentController::class, 'destroy']);
+});
+
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_OCCUPATIONS->value])->group(function () {
+    Route::get('/occupations', [OccupationController::class, 'index']);
+    Route::post('/occupations', [OccupationController::class, 'store']);
+    Route::get('/occupations/{occupation}', [OccupationController::class, 'show']);
+    Route::put('/occupations/{occupation}', [OccupationController::class, 'edit']);
+    Route::delete('/occupations/{occupation}', [OccupationController::class, 'destroy']);
 });

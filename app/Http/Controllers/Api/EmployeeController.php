@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\EmployeesResource;
 use App\Models\Department;
 use App\Models\Employee;
+use App\Models\Occupation;
 use App\Models\User;
 use Exception;
 use Illuminate\Database\QueryException;
@@ -55,6 +56,7 @@ class EmployeeController extends Controller
             'email'        => 'required|email|max:255|unique:employees,email',
             'phone'        => 'nullable|string|max:20|unique:employees,phone',
             'departmentId' => 'required|integer|exists:departments,id',
+            'occupation_id' => 'nullable|integer|exists:occupations,id',
             'gender'       => 'required|in:male,female',
             'birthdate'    => 'nullable|date',
             'photo_path'   => 'nullable|string|max:255',
@@ -70,6 +72,11 @@ class EmployeeController extends Controller
             $department = Department::find($request->departmentId);
             if (!$department) throw_msg('Department not found', 404);
 
+            $occupation = null;
+            if ($request->occupation_id) {
+                $occupation = Occupation::find($request->occupation_id);
+                if (!$occupation) throw_msg('Occupation not found', 404);
+            }
             $employee = null;
             $user = null;
 
@@ -87,6 +94,7 @@ class EmployeeController extends Controller
                     'birthdate'    => $request->birthdate,
                     'gender'       => $request->gender,
                     'photo_path'   => $request->photo_path,
+                    'occupation_id' => $request->occupation_id,
                 ]);
 
                 $role = Role::findByName(Roles::EMPLOYEE->value, 'sanctum');
@@ -115,7 +123,7 @@ class EmployeeController extends Controller
 
             $responseData = [
                 'success' => true,
-                'data'    => new EmployeesResource($employee->load('department')),
+                'data'    => new EmployeesResource($employee->load(['department', 'occupation'])),
             ];
 
             return $this->sendResponse($responseData, 'Employee created successfully.', 201);
@@ -128,7 +136,7 @@ class EmployeeController extends Controller
 
     public function show($id): JsonResponse
     {
-        $employee = Employee::with('department')->find($id);
+        $employee = Employee::with(['department', 'occupation'])->find($id);
         if (!$employee) {
             return $this->sendError('Employee not found.', [], 404);
         }
@@ -155,6 +163,7 @@ class EmployeeController extends Controller
             'Email'        => ['required', 'email', 'max:255', Rule::unique('employees', 'email')->ignore($employee->id)],
             'Phone'        => ['nullable', 'string', 'max:20', Rule::unique('employees', 'phone')->ignore($employee->id)],
             'DepartmentID' => 'required|integer|exists:departments,id',
+            'occupation_id' => 'nullable|integer|exists:occupations,id',
             'Status'       => 'required|in:active,inactive,terminated',
             'gender'       => 'required|in:male,female',
             'birthdate'    => 'nullable|date',
@@ -179,6 +188,7 @@ class EmployeeController extends Controller
                 'birthdate'    => $request->birthdate,
                 'gender'       => $request->gender,
                 'photo_path'   => $request->photo_path,
+                'occupation_id' => $request->occupation_id,
             ]);
 
             if ($user = $employee->user) {
@@ -190,7 +200,7 @@ class EmployeeController extends Controller
             }
 
             $result = [
-                'item'  => new EmployeesResource($employee->load('department')),
+                'item'  => new EmployeesResource($employee->load(['department', 'occupation'])),
                 'meta'  => [],
                 'links' => [],
             ];
