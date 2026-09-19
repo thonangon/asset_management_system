@@ -19,6 +19,10 @@ enum Permissions: string
     case VIEW_ASSET_HISTORY = 'view asset history';
     case MANAGE_ASSET_DOCUMENTS = 'manage asset documents';
 
+    // Organization Management
+    case VIEW_ORGANIZATIONS = 'view organizations';
+    case MANAGE_ORGANIZATIONS = 'manage organizations';
+
     // Department Management
     case VIEW_DEPARTMENTS = 'view departments';
     case MANAGE_DEPARTMENTS = 'manage departments';
@@ -41,6 +45,14 @@ enum Permissions: string
     case MANAGE_ROLES = 'manage roles';
     case VIEW_PERMISSIONS = 'view permissions';
     case MANAGE_PERMISSIONS = 'manage permissions';
+
+    // Occupation Management
+    case VIEW_OCCUPATIONS = 'view occupations';
+    case MANAGE_OCCUPATIONS = 'manage occupations';
+    case DELETE_OCCUPATIONS = 'delete occupations';
+
+    case VIEW_LOCATIONS = 'view locations';
+    case MANAGE_LOCATIONS = 'manage locations';
 
     // System Administration
     case SYSTEM_SETTINGS = 'system settings';

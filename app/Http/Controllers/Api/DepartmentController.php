@@ -46,6 +46,7 @@ class DepartmentController extends Controller
         $validate = Validator::make($request->all(), [
             'Name'        => 'required|string|max:100|unique:departments,Name',
             'Code'        => 'nullable|string|max:20|unique:departments,Code',
+            'organization_id' => 'required|integer|exists:organizations,id',
             'description' => 'nullable|string',
         ]);
 
@@ -57,6 +58,7 @@ class DepartmentController extends Controller
             $department = Department::create([
                 'Name'        => $request->Name,
                 'Code'        => $request->Code ?: generateUniqueCode(5, 'DEPT-'),
+                'organization_id' => $request->organization_id,
                 'description' => $request->description,
             ]);
 
@@ -99,6 +101,7 @@ class DepartmentController extends Controller
         $validate = Validator::make($request->all(), [
             'Name'        => ['required', 'string', 'max:100', Rule::unique('departments', 'Name')->ignore($department->id)],
             'Code'        => ['nullable', 'string', 'max:20', Rule::unique('departments', 'Code')->ignore($department->id)],
+            'organization_id' => 'required|integer|exists:organizations,id',
             'description' => 'nullable|string',
         ]);
 
@@ -110,6 +113,7 @@ class DepartmentController extends Controller
             $department->update([
                 'Name'        => $request->Name,
                 'Code'        => $request->filled('Code') ? $request->Code : $department->getOriginal('Code'),
+                'organization_id' => $request->organization_id,
                 'description' => $request->description,
             ]);
 

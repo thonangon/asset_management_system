@@ -31,6 +31,11 @@ class EmployeesResource extends JsonResource
                 'name' => $this->department->Name,
                 'code' => $this->department->Code,
             ] : null,
+            'occupation' => $this->occupation ? [
+                'id'   => $this->occupation->id,
+                'name' => $this->occupation->name,
+                'description' => $this->occupation->description,
+            ] : null,
         ];
     }
 }
