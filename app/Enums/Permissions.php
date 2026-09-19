@@ -51,6 +51,9 @@ enum Permissions: string
     case MANAGE_OCCUPATIONS = 'manage occupations';
     case DELETE_OCCUPATIONS = 'delete occupations';
 
+    case VIEW_LOCATIONS = 'view locations';
+    case MANAGE_LOCATIONS = 'manage locations';
+
     // System Administration
     case SYSTEM_SETTINGS = 'system settings';
     case AUDIT_LOGS = 'audit logs';

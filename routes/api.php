@@ -2,13 +2,18 @@
 
 use App\Enums\Permissions;
 use App\Enums\Roles;
+use App\Http\Controllers\Api\AssetCategoryController;
+use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\DepreciationController;
 use App\Http\Controllers\Api\EmployeeController;
+use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\OccupationController;
 use App\Http\Controllers\Api\OrganizationController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\WarrantyController;
 use Illuminate\Support\Facades\Route;
 
 // Public routes
@@ -94,4 +99,51 @@ Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_OCCUPATIO
     Route::get('/occupations/{occupation}', [OccupationController::class, 'show']);
     Route::put('/occupations/{occupation}', [OccupationController::class, 'edit']);
     Route::delete('/occupations/{occupation}', [OccupationController::class, 'destroy']);
+});
+
+// Location listing: requires "view locations" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_LOCATIONS->value])->group(function () {
+    Route::get('/locations/list', [LocationController::class, 'index']);
+    Route::get('/locations/{location}', [LocationController::class, 'show']);
+});
+
+// Location management: requires "manage locations" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_LOCATIONS->value])->group(function () {
+    Route::post('/locations', [LocationController::class, 'store']);
+    Route::put('/locations/{location}', [LocationController::class, 'update']);
+    Route::delete('/locations/{location}', [LocationController::class, 'destroy']);
+});
+
+// Asset category listing: requires "view categories" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_CATEGORIES->value])->group(function () {
+    Route::get('/asset-categories/list', [AssetCategoryController::class, 'index']);
+    Route::get('/asset-categories/{assetCategory}', [AssetCategoryController::class, 'show']);
+});
+
+// Asset category management: requires "manage categories" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_CATEGORIES->value])->group(function () {
+    Route::post('/asset-categories', [AssetCategoryController::class, 'store']);
+    Route::put('/asset-categories/{assetCategory}', [AssetCategoryController::class, 'update']);
+    Route::delete('/asset-categories/{assetCategory}', [AssetCategoryController::class, 'destroy']);
+});
+
+// Asset listing: requires "view assets" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_ASSETS->value])->group(function () {
+    Route::get('/assets/list', [AssetController::class, 'index']);
+    Route::get('/assets/{asset}', [AssetController::class, 'show']);
+});
+
+// Asset management: requires "manage assets" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_ASSETS->value])->group(function () {
+    Route::post('/assets', [AssetController::class, 'store']);
+    Route::put('/assets/{asset}', [AssetController::class, 'update']);
+    Route::delete('/assets/{asset}', [AssetController::class, 'destroy']);
+});
+
+// Warranty & Depreciation listing: requires "view asset history" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_ASSET_HISTORY->value])->group(function () {
+    Route::get('/warranties/list', [WarrantyController::class, 'index']);
+    Route::get('/warranties/{warranty}', [WarrantyController::class, 'show']);
+    Route::get('/depreciations/list', [DepreciationController::class, 'index']);
+    Route::get('/depreciations/{depreciation}', [DepreciationController::class, 'show']);
 });

@@ -67,7 +67,6 @@ class OrganizationController extends Controller
             ]);
 
             $responseData = [
-                'success' => true,
                 'data'    => new OrganizationResource($organization),
             ];
 

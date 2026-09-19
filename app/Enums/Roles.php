@@ -41,6 +41,8 @@ enum Roles: string
                 Permissions::MANAGE_ASSET_TYPES,
                 Permissions::VIEW_ASSET_HISTORY,
                 Permissions::MANAGE_ASSET_DOCUMENTS,
+                Permissions::VIEW_LOCATIONS,
+                Permissions::MANAGE_LOCATIONS,
                 Permissions::VIEW_REPORTS,
                 Permissions::VIEW_DASHBOARD,
                 Permissions::VIEW_USERS,

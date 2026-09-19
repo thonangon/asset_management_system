@@ -21,4 +21,9 @@ class Organization extends Model
     {
         return $this->hasMany(Department::class, 'organization_id', 'id');
     }
+
+    public function locations()
+    {
+        return $this->hasMany(Location::class, 'organization_id', 'id');
+    }
 }
