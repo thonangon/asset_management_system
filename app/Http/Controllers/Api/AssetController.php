@@ -154,12 +154,13 @@ class AssetController extends Controller
 
             $asset->load(['assetCategory', 'location', 'warranty', 'depreciations']);
 
-            $responseData = [
-                'success' => true,
-                'data'    => new AssetResource($asset),
+            $result = [
+                'item'  => new AssetResource($asset),
+                'meta'  => [],
+                'links' => [],
             ];
 
-            return $this->sendResponse($responseData, 'Asset created successfully.', 201);
+            return $this->sendResponse($result, 'Asset created successfully.', 201);
         } catch (QueryException $e) {
             return $this->sendError('Database error: Could not save asset.', [], 422);
         } catch (Exception $e) {

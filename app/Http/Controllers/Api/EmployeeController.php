@@ -121,12 +121,13 @@ class EmployeeController extends Controller
                 throw $e;
             }
 
-            $responseData = [
-                'success' => true,
-                'data'    => new EmployeesResource($employee->load(['department', 'occupation'])),
+            $result = [
+                'item'  => new EmployeesResource($employee->load(['department', 'occupation'])),
+                'meta'  => [],
+                'links' => [],
             ];
 
-            return $this->sendResponse($responseData, 'Employee created successfully.', 201);
+            return $this->sendResponse($result, 'Employee created successfully.', 201);
         } catch (QueryException $e) {
             return $this->sendError('Database error: Could not save employee.', [], 422);
         } catch (Exception $e) {

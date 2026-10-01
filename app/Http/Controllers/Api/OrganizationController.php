@@ -66,11 +66,13 @@ class OrganizationController extends Controller
                 'logo'        => $request->logo,
             ]);
 
-            $responseData = [
-                'data'    => new OrganizationResource($organization),
+            $result = [
+                'item'  => new OrganizationResource($organization),
+                'meta'  => [],
+                'links' => [],
             ];
 
-            return $this->sendResponse($responseData, 'Organization created successfully.', 201);
+            return $this->sendResponse($result, 'Organization created successfully.', 201);
         } catch (QueryException $e) {
             return $this->sendError('Database error: Could not save organization.', [], 422);
         } catch (Exception $e) {

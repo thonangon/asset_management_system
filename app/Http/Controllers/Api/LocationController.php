@@ -64,12 +64,13 @@ class LocationController extends Controller
                 'organization_id' => $request->organization_id,
             ]);
 
-            $responseData = [
-                'success' => true,
-                'data'    => new LocationResource($location->load('organization')),
+            $result = [
+                'item'  => new LocationResource($location->load('organization')),
+                'meta'  => [],
+                'links' => [],
             ];
 
-            return $this->sendResponse($responseData, 'Location created successfully.', 201);
+            return $this->sendResponse($result, 'Location created successfully.', 201);
         } catch (QueryException $e) {
             return $this->sendError('Database error: Could not save location.', [], 422);
         } catch (Exception $e) {

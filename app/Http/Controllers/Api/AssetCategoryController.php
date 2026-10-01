@@ -60,12 +60,13 @@ class AssetCategoryController extends Controller
                 'description' => $request->description,
             ]);
 
-            $responseData = [
-                'success' => true,
-                'data'    => new AssetCategoryResource($category),
+            $result = [
+                'item'  => new AssetCategoryResource($category),
+                'meta'  => [],
+                'links' => [],
             ];
 
-            return $this->sendResponse($responseData, 'Asset category created successfully.', 201);
+            return $this->sendResponse($result, 'Asset category created successfully.', 201);
         } catch (QueryException $e) {
             return $this->sendError('Database error: Could not save asset category.', [], 422);
         } catch (Exception $e) {

@@ -82,7 +82,9 @@ class AssetAssignmentController extends Controller
             ], fn ($value) => $value !== null));
 
             return $this->sendResponse([
-                'data' => new AssetAssignmentResource($assignment->load('asset', 'assignedTo')),
+                'item'  => new AssetAssignmentResource($assignment->load('asset', 'assignedTo')),
+                'meta'  => [],
+                'links' => [],
             ], 'Asset assignment created successfully.', 201);
         } catch (QueryException $e) {
             return $this->sendError('Database error: Could not save asset assignment.', [], 422);

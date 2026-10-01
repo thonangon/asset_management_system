@@ -5,6 +5,7 @@ use App\Enums\Roles;
 use App\Http\Controllers\Api\AssetAssignmentController;
 use App\Http\Controllers\Api\AssetCategoryController;
 use App\Http\Controllers\Api\AssetController;
+use App\Http\Controllers\Api\AssetTransferController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\DepreciationController;
@@ -160,4 +161,17 @@ Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_ASSETS->v
     Route::post('/asset-assignments', [AssetAssignmentController::class, 'store']);
     Route::put('/asset-assignments/{assetAssignment}', [AssetAssignmentController::class, 'update']);
     Route::delete('/asset-assignments/{assetAssignment}', [AssetAssignmentController::class, 'destroy']);
+});
+
+// Asset transfer listing: requires "view assets" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_ASSETS->value])->group(function () {
+    Route::get('/asset-transfers/list', [AssetTransferController::class, 'index']);
+    Route::get('/asset-transfers/{assetTransfer}', [AssetTransferController::class, 'show']);
+});
+
+// Asset transfer management: requires "manage assets" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_ASSETS->value])->group(function () {
+    Route::post('/asset-transfers', [AssetTransferController::class, 'store']);
+    Route::put('/asset-transfers/{assetTransfer}', [AssetTransferController::class, 'update']);
+    Route::delete('/asset-transfers/{assetTransfer}', [AssetTransferController::class, 'destroy']);
 });

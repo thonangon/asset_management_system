@@ -62,12 +62,13 @@ class DepartmentController extends Controller
                 'description' => $request->description,
             ]);
 
-            $responseData = [
-                'success' => true,
-                'data'    => new DepartmentResource($department),
+            $result = [
+                'item'  => new DepartmentResource($department),
+                'meta'  => [],
+                'links' => [],
             ];
 
-            return $this->sendResponse($responseData, 'Department created successfully.', 201);
+            return $this->sendResponse($result, 'Department created successfully.', 201);
         } catch (QueryException $e) {
             return $this->sendError('Database error: Could not save department.', [], 422);
         } catch (Exception $e) {
