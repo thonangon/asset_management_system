@@ -2,6 +2,7 @@
 
 use App\Enums\Permissions;
 use App\Enums\Roles;
+use App\Http\Controllers\Api\AssetAssignmentController;
 use App\Http\Controllers\Api\AssetCategoryController;
 use App\Http\Controllers\Api\AssetController;
 use App\Http\Controllers\Api\AuthController;
@@ -146,4 +147,17 @@ Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_ASSET_HISTO
     Route::get('/warranties/{warranty}', [WarrantyController::class, 'show']);
     Route::get('/depreciations/list', [DepreciationController::class, 'index']);
     Route::get('/depreciations/{depreciation}', [DepreciationController::class, 'show']);
+});
+
+// Asset assignment listing: requires "view assets" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_ASSETS->value])->group(function () {
+    Route::get('/asset-assignments/list', [AssetAssignmentController::class, 'index']);
+    Route::get('/asset-assignments/{assetAssignment}', [AssetAssignmentController::class, 'show']);
+});
+
+// Asset assignment management: requires "manage assets" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::MANAGE_ASSETS->value])->group(function () {
+    Route::post('/asset-assignments', [AssetAssignmentController::class, 'store']);
+    Route::put('/asset-assignments/{assetAssignment}', [AssetAssignmentController::class, 'update']);
+    Route::delete('/asset-assignments/{assetAssignment}', [AssetAssignmentController::class, 'destroy']);
 });
