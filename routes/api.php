@@ -5,6 +5,7 @@ use App\Enums\Roles;
 use App\Http\Controllers\Api\AssetAssignmentController;
 use App\Http\Controllers\Api\AssetCategoryController;
 use App\Http\Controllers\Api\AssetController;
+use App\Http\Controllers\Api\AssetReportController;
 use App\Http\Controllers\Api\AssetTransferController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DepartmentController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\Api\EmployeeController;
 use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\Api\OccupationController;
 use App\Http\Controllers\Api\OrganizationController;
+use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\Api\RoleController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\WarrantyController;
@@ -148,6 +150,18 @@ Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_ASSET_HISTO
     Route::get('/warranties/{warranty}', [WarrantyController::class, 'show']);
     Route::get('/depreciations/list', [DepreciationController::class, 'index']);
     Route::get('/depreciations/{depreciation}', [DepreciationController::class, 'show']);
+});
+
+// Asset report listing: requires "view reports" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::VIEW_REPORTS->value])->group(function () {
+    Route::get('/asset-reports', [AssetReportController::class, 'index']);
+    Route::get('/reports', [AssetReportController::class, 'history']);
+});
+
+// Asset report export: requires "generate reports" permission
+Route::middleware(['auth:sanctum', 'permission:' . Permissions::GENERATE_REPORTS->value])->group(function () {
+    Route::get('/asset-reports/export', [AssetReportController::class, 'export']);
+    Route::post('/reports/generate', [AssetReportController::class, 'generate']);
 });
 
 // Asset assignment listing: requires "view assets" permission
