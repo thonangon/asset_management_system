@@ -49,4 +49,9 @@ class Asset extends Model
     {
         return $this->hasMany(Depreciation::class, 'asset_id', 'id');
     }
+
+    public function transfers()
+    {
+        return $this->hasMany(AssetTransfer::class, 'assetId', 'id');
+    }
 }
